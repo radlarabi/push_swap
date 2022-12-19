@@ -6,7 +6,7 @@
 /*   By: rlarabi <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/12/16 19:11:56 by rlarabi           #+#    #+#             */
-/*   Updated: 2022/12/19 18:06:53 by rlarabi          ###   ########.fr       */
+/*   Updated: 2022/12/19 20:25:19 by rlarabi          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -86,47 +86,104 @@ void small_sort(t_list *a, t_list *b)
 {
     int *array_sorted = get_table(a);
     int median = get_median(a), mid = ((a->top + 1) / 2) - 1;
-    int offset =  (a->top + 1) / 8 ,start = mid - offset, end= mid + offset, i = 0, j = 0, max, max2, t1 = 1;
+    int offset =  (a->top + 1) / 8 ,start = mid - 2*offset, end= mid + 2*offset, i = 0, j = 0, max, max2, t1 = 1;
 
     while (a->top != -1)
     {
-        i = 0;
         while (if_exist(a->tab, a->top + 1,array_sorted, start, end))
         {
-            if (a->tab[0] > array_sorted[start] && a->tab[0] < array_sorted[end])
-            {
-                rotate_reverce_list(a, 'a');
-            }
             if (a->tab[a->top] >= array_sorted[start] && a->tab[a->top] <= array_sorted[end])    
             {
                 push(a, b, 'b');
-                if(b->tab[b->top] < array_sorted[mid])
+                if(a->tab[a->top] > a->tab[a->top - 1])
+                    swap_list(a, 'a');
+                if(b->tab[b->top] <= array_sorted[mid] && b->top != 0)
                     rotate_list(b , 'b');
+                else
+                {
+                    i = 0;
+                    while (i <= b->top)
+                    {
+                        if(b->tab[b->top - i] < b->tab[b->top - i - 1])
+                        {
+                            j = i;
+                            if (j < (b->top) / 2)
+                            {   
+                                while (j > 0)
+                                {
+                                    rotate_list(b ,'b');
+                                    j--;
+                                }
+                                swap_list(b, 'b');
+                                j = i;
+                                while (j > 0)
+                                {
+                                    rotate_reverce_list(b ,'b');
+                                    j--;
+                                }
+                            }
+                        }
+                        i++;
+                    }
+                }
             }
-            else 
-                rotate_list(a, 'a');
+            else
+            {
+                i = 0;
+                while(i < a->top)
+                {
+                   if (a->tab[i] >= array_sorted[start] && a->tab[i] <= array_sorted[end])
+                        break;
+                    i++;
+                }
+                j = a->top;
+                while(j >= 0)
+                {
+                   if (a->tab[j] >= array_sorted[start] && a->tab[j] <= array_sorted[end])
+                        break;
+                    j--;
+                }
+                if (i < j)
+                    rotate_list(a, 'a');
+                else 
+                    rotate_reverce_list(a, 'a');
+            }
             i++;
         }
         if (is_sorted(a))
             break;
-        j++;
         start -= offset;
         end += offset;
     }
     while (a->top != -1)
         push(a, b, 'b');
+
     i = b->top;
     max = get_max_list(b->tab, b->top + 1);
+
     while (a->tab[a->top] != max)
     {
+        if(b->tab[b->top] < b->tab[b->top - 1])
+            swap_list(b, 'b');
         push(b, a, 'a');
+        if(a->tab[a->top] > a->tab[a->top - 1])
+            swap_list(a, 'a');
         i--;
     }
+
     while (i >= 0)
     {
         max2 = get_max_list(b->tab, b->top + 1);
+        
+        if(b->tab[b->top] < b->tab[b->top - 1])
+            swap_list(b, 'b');
+
         push(b, a, 'a');
-        if (a->tab[a->top] < max2)
+        
+        if(a->tab[a->top] > a->tab[a->top - 1])
+            swap_list(a, 'a');
+            
+        if (a->tab[a->top] > max2)
         {
             rotate_list(a,'a');
             continue;
