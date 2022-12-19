@@ -6,7 +6,7 @@
 /*   By: rlarabi <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/12/16 13:13:10 by rlarabi           #+#    #+#             */
-/*   Updated: 2022/12/16 15:09:12 by rlarabi          ###   ########.fr       */
+/*   Updated: 2022/12/19 10:56:56 by rlarabi          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -70,7 +70,7 @@ t_list  *create_list(int i)
     return a;
 }
 
-int get_median(t_list *a)
+int *get_table(t_list *a)
 {
     int i = 0, temp, j, median = 1, size = a->top + 1;
     int *array;
@@ -81,6 +81,7 @@ int get_median(t_list *a)
         array[i] = a->tab[i];
         i++;
     }
+    i = 0;
     while(i < size)
     {
         j = 0;
@@ -96,6 +97,13 @@ int get_median(t_list *a)
         }
         i++;
     }
+    return array;
+}
+
+int get_median(t_list *a)
+{
+    int *array = get_table(a);
+    int median, size = a->top + 1;
     if(size % 2 == 0)
         median = (array[(size-1)/2] + array[size/2]) / 2;
     else

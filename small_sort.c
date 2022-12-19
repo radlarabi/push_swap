@@ -6,7 +6,7 @@
 /*   By: rlarabi <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/12/16 19:11:56 by rlarabi           #+#    #+#             */
-/*   Updated: 2022/12/18 14:55:05 by rlarabi          ###   ########.fr       */
+/*   Updated: 2022/12/19 18:06:53 by rlarabi          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,89 +17,150 @@ int check_grand(t_list *a, int i)
     int j = a->top;
     while (j >= 0)
     {
-        if (a->tab[j] < i)
-            return 0;
+        if (a->tab[j] <= i)
+            return 1;
         j--;
     }
-    return 1;
+    return 0;
+}
+int check_small(t_list *a, int i)
+{
+    int j = a->top;
+    while (j >= 0)
+    {
+        if (a->tab[j] >= i)
+            return 1;
+        j--;
+    }
+    return 0;
+}
+// int get_max_list(t_list *a)
+// {
+//     int max = a->tab[0], i = 0, j;
+//     while(i < a->size)
+//     {
+//         j = i + 1;
+//         while(j < a->size)
+//         {
+//             if(max < a->tab[j])
+//                 max = a->tab[j];
+//             j++;
+//         }
+//         i++;
+//     }
+//     return max;
+// }
+int get_max_list(int *a, int size)
+{
+    int max = a[0], i = 0, j;
+    while(i < size)
+    {
+        j = i + 1;
+        while(j < size)
+        {
+            if(max < a[j])
+                max = a[j];
+            j++;
+        }
+        i++;
+    }
+    return max;
+}
+int if_exist(int *a, int size_a,int *array, int start , int end)
+{
+  int i = start, j = 0;
+  while (i < end)
+  {
+    j = 0;
+    while (j < size_a)
+    {
+      if (a[j] == array[i])
+        return 1;
+      j++;
+    }
+    i++;
+  }
+  return 0;
 }
 void small_sort(t_list *a, t_list *b)
 {
-    int mid,i = 0,j, median, index, start , end;
-    t_table *temp;
+    int *array_sorted = get_table(a);
+    int median = get_median(a), mid = ((a->top + 1) / 2) - 1;
+    int offset =  (a->top + 1) / 8 ,start = mid - offset, end= mid + offset, i = 0, j = 0, max, max2, t1 = 1;
 
-    index = get_index(a->tab, a->top , median);
-    temp = get_table(a);
-    end = temp->end / 2;
-    start = 0;
-    while (j <= 10)
+    while (a->top != -1)
     {
-        i = a->top;
-        median = get_median(a);
-        while (i >= 0)
+        i = 0;
+        while (if_exist(a->tab, a->top + 1,array_sorted, start, end))
         {
-            if (check_grand(a, median) || is_sorted(a))
-                break;
-            else if (a->tab[a->top] > a->tab[a->top - 1] && a->tab[a->top - 1] > median)
-                swap_list(a, 'a');
-            else if(a->tab[a->top] < median)
-                push(a, b, 'b');
-            else if (a->tab[a->top] >= median && a->tab[0] < median)
+            if (a->tab[0] > array_sorted[start] && a->tab[0] < array_sorted[end])
+            {
                 rotate_reverce_list(a, 'a');
-            else
+            }
+            if (a->tab[a->top] >= array_sorted[start] && a->tab[a->top] <= array_sorted[end])    
+            {
+                push(a, b, 'b');
+                if(b->tab[b->top] < array_sorted[mid])
+                    rotate_list(b , 'b');
+            }
+            else 
                 rotate_list(a, 'a');
-            if (b->tab[b->top] < b->tab[0] && b->tab[b->top] < b->tab[b->top - 1])
-                rotate_list(b, 'b');
-            else if (b->tab[b->top] < b->tab[b->top - 1])
-                swap_list(b, 'b');
-            if (a->top == 2)
-                sort_3(a);
-            i--;
-            // printf("\n-_-_median %d-_-_\n", median);
-            // display_list(a);
-            // printf("\n-_-_-_-_\n");
-            // display_list(b);
-            // printf("\n-_-_-_-_\n");
+            i++;
         }
+        if (is_sorted(a))
+            break;
         j++;
+        start -= offset;
+        end += offset;
     }
-    j = b->top;
-    while(j >= 0)
+    while (a->top != -1)
+        push(a, b, 'b');
+    i = b->top;
+    max = get_max_list(b->tab, b->top + 1);
+    while (a->tab[a->top] != max)
     {
         push(b, a, 'a');
-        i = a->top;
-        while (i >= 0)
+        i--;
+    }
+    while (i >= 0)
+    {
+        max2 = get_max_list(b->tab, b->top + 1);
+        push(b, a, 'a');
+        if (a->tab[a->top] < max2)
         {
-            if (a->tab[a->top - i] < a->tab[a->top])
-            {
-                index = get_index(a->tab, a->top, a->tab[a->top - i]);
-                if (i == 1)
-                    swap_list(a, 'a');
-                if (i == 2)
-                {
-                    swap_list(a, 'a');
-                    rotate_list(a, 'a');
-                    swap_list(a, 'a');
-                    rotate_reverce_list(a, 'a');
-                }
-                // if (index > (a->top / 2))
-                //     printf("\n***%d***\n", index);
-            }
-            // break;
-            i--;
+            rotate_list(a,'a');
+            continue;
         }
-        j--;
-        
-        // printf("\n^^^^^^^^\n");
-        // display_list(a);
+        while (a->tab[0] != max)
+            rotate_reverce_list(a, 'a');
+        i--;
     }
 }
 
 
 
-
-
-
+// i = b->top;
+//     max = get_max_list(b->tab, b->top + 1);
+//     while (a->tab[a->top] != max)
+//     {
+//         push(b, a, 'a');
+//         i--;
+//     }
+//     while (a->tab[0] != max)
+//         rotate_reverce_list(a, 'a');
+//     while (i >= 0)
+//     {
+//         push(b, a, 'a');
+//         max2 = get_max_list(b->tab, b->top + 1);
+//         if (a->tab[a->top] < max2)
+//         {
+//             rotate_list(a,'a');
+//             continue;
+//         } 
+//         while (a->tab[0] != max)
+//             rotate_reverce_list(a, 'a');
+//         i--;
+//     }
 
 
 

@@ -6,7 +6,7 @@
 /*   By: rlarabi <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/12/09 19:41:17 by rlarabi           #+#    #+#             */
-/*   Updated: 2022/12/16 19:20:57 by rlarabi          ###   ########.fr       */
+/*   Updated: 2022/12/19 14:51:58 by rlarabi          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -36,20 +36,33 @@ int main(int ac, char **av)
     int *temp;
     if (ac == 1)
         return 0;
-    ret = ft_split(av[1], ' ');
-    while(ret[i])
-        i++;
-    temp = malloc(sizeof(int) * i);
-    a = create_list(i);
-    b = create_list(i);
-    while(i > 0)
+    
+    // ret = ft_split(av[1], ' ');
+    // while(ret[i])
+    //     i++;
+    temp = malloc(sizeof(int) * (ac - 1));
+    a = create_list(ac - 1);
+    b = create_list(ac - 1);
+    // if(ac == 2)
+    // {
+    //     while(i > 0)
+    //     {
+    //         if(!ft_atoi(ret[--i]) && ft_strncmp(ret[i],"0", 1))
+    //         {
+    //             write(1, "Error\n", 6);
+    //             return 0;
+    //         }
+    //         a->tab[++a->top] = ft_atoi(ret[i]);
+    //     }
+    // }
+    if (ac > 2)
     {
-        if(!ft_atoi(ret[--i]) && ft_strncmp(ret[i],"0", 1))
+        i = ac - 1;
+        while (i > 0)
         {
-            write(1, "Error\n", 6);
-            return 0;
+            a->tab[++a->top] = ft_atoi(av[i]);
+            i--;
         }
-        a->tab[++a->top] = ft_atoi(ret[i]);
     }
     if(!is_duplicate(a))
     {
@@ -62,16 +75,18 @@ int main(int ac, char **av)
         sort_2(a);
     else if (a->top == 2)
         sort_3(a);
-    else if (a->top == 4)
+    else if (a->top == 4 || a->top == 3)
         sort_5(a, b);
-    // else if (a->top > 4 && a->top <= 99)
-    //     small_sort(a, b);
+    else if (a->top > 4 && a->top <= 99)
+        small_sort(a, b);
     // else if (a->top > 99)
     //     big_sort(a, b);
 
 
     
-    display_list(b);
+    // display_list(a);
+    // printf("-_-_-_-_\n");
+    // display_list(b);
     return 0;
 }
 

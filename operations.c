@@ -6,7 +6,7 @@
 /*   By: rlarabi <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/12/13 18:47:08 by rlarabi           #+#    #+#             */
-/*   Updated: 2022/12/16 19:12:55 by rlarabi          ###   ########.fr       */
+/*   Updated: 2022/12/18 13:22:42 by rlarabi          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,24 +14,30 @@
 
 void    swap_list(t_list *list, char m)
 {
-    int temp, top = list->top;
-    temp = list->tab[top];
-    list->tab[top] = list->tab[top - 1];
-    list->tab[top - 1] = temp;
+    if (list->top != -1 && list->top != 0)
+    {
+        int temp, top = list->top;
+        temp = list->tab[top];
+        list->tab[top] = list->tab[top - 1];
+        list->tab[top - 1] = temp;
 
-    if (m == 'a')
-        write(1, "sa\n", 3);
-    else if (m == 'b')
-        write(1, "sb\n", 3);
+        if (m == 'a')
+            write(1, "sa\n", 3);
+        else if (m == 'b')
+            write(1, "sb\n", 3);    
+    }
 }
 
 void    push(t_list *a, t_list *b, char m)
 {
-    b->tab[++b->top] = a->tab[a->top--];
-    if (m == 'a')
-        write(1, "pa\n", 3);
-    else if (m == 'b')
-        write(1, "pb\n", 3);
+    if (a->top != -1)
+    {
+        b->tab[++b->top] = a->tab[a->top--];
+        if (m == 'a')
+            write(1, "pa\n", 3);
+        else if (m == 'b')
+            write(1, "pb\n", 3);
+    }
 }
 
 void    rotate_reverce_list(t_list *list, char m)
