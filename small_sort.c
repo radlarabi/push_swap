@@ -6,7 +6,7 @@
 /*   By: rlarabi <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/12/16 19:11:56 by rlarabi           #+#    #+#             */
-/*   Updated: 2022/12/19 20:25:19 by rlarabi          ###   ########.fr       */
+/*   Updated: 2022/12/20 15:42:36 by rlarabi          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -34,22 +34,7 @@ int check_small(t_list *a, int i)
     }
     return 0;
 }
-// int get_max_list(t_list *a)
-// {
-//     int max = a->tab[0], i = 0, j;
-//     while(i < a->size)
-//     {
-//         j = i + 1;
-//         while(j < a->size)
-//         {
-//             if(max < a->tab[j])
-//                 max = a->tab[j];
-//             j++;
-//         }
-//         i++;
-//     }
-//     return max;
-// }
+
 int get_max_list(int *a, int size)
 {
     int max = a[0], i = 0, j;
@@ -66,27 +51,42 @@ int get_max_list(int *a, int size)
     }
     return max;
 }
-int if_exist(int *a, int size_a,int *array, int start , int end)
+
+// int if_exist(int *a, int size_a,int *array, int start , int end, int old_start , int old_end)
+// {
+//   int i = start, j = 0;
+//   while (i <= end)
+//   {
+//     if (i >= old_start && i <= old_end)
+//         i += (old_end - old_start) + 1;
+//     j = 0;
+//     while (j < size_a)
+//     {
+//       if (a[j] == array[i])
+//         return 1;
+//       j++;
+//     }
+//     i++;
+//   }
+//   return 0;
+// }
+
+int if_exist(int *a, int size_a , int * arr ,int start, int end)
 {
-  int i = start, j = 0;
-  while (i < end)
-  {
-    j = 0;
-    while (j < size_a)
+    int i = 0;
+    while(i < size_a)
     {
-      if (a[j] == array[i])
-        return 1;
-      j++;
+        if (a[i] >= arr[start] && a[i] <= arr[end])
+            return 1;
+        i++;
     }
-    i++;
-  }
-  return 0;
+    return 0;
 }
 void small_sort(t_list *a, t_list *b)
 {
     int *array_sorted = get_table(a);
     int median = get_median(a), mid = ((a->top + 1) / 2) - 1;
-    int offset =  (a->top + 1) / 8 ,start = mid - 2*offset, end= mid + 2*offset, i = 0, j = 0, max, max2, t1 = 1;
+    int offset =  (a->top + 1) / 8 ,start = mid - offset, end= mid + offset, i = 0, j = 0, max, max2, t1 = 1;
 
     while (a->top != -1)
     {
@@ -95,42 +95,15 @@ void small_sort(t_list *a, t_list *b)
             if (a->tab[a->top] >= array_sorted[start] && a->tab[a->top] <= array_sorted[end])    
             {
                 push(a, b, 'b');
-                if(a->tab[a->top] > a->tab[a->top - 1])
-                    swap_list(a, 'a');
-                if(b->tab[b->top] <= array_sorted[mid] && b->top != 0)
+                // if(a->tab[a->top] > a->tab[a->top - 1])
+                //     swap_list(a, 'a');
+                if(b->tab[b->top] <= array_sorted[mid] && b->top != 0 && b->top != -1)
                     rotate_list(b , 'b');
-                else
-                {
-                    i = 0;
-                    while (i <= b->top)
-                    {
-                        if(b->tab[b->top - i] < b->tab[b->top - i - 1])
-                        {
-                            j = i;
-                            if (j < (b->top) / 2)
-                            {   
-                                while (j > 0)
-                                {
-                                    rotate_list(b ,'b');
-                                    j--;
-                                }
-                                swap_list(b, 'b');
-                                j = i;
-                                while (j > 0)
-                                {
-                                    rotate_reverce_list(b ,'b');
-                                    j--;
-                                }
-                            }
-                        }
-                        i++;
-                    }
-                }
             }
             else
             {
                 i = 0;
-                while(i < a->top)
+                while(i <= a->top)
                 {
                    if (a->tab[i] >= array_sorted[start] && a->tab[i] <= array_sorted[end])
                         break;
@@ -143,56 +116,97 @@ void small_sort(t_list *a, t_list *b)
                         break;
                     j--;
                 }
-                if (i < j)
+                if (i > a->top - j)
                     rotate_list(a, 'a');
-                else 
+                else
                     rotate_reverce_list(a, 'a');
             }
             i++;
         }
         if (is_sorted(a))
             break;
+        i = start;
+        j = end;
         start -= offset;
         end += offset;
     }
     while (a->top != -1)
         push(a, b, 'b');
-
     i = b->top;
-    max = get_max_list(b->tab, b->top + 1);
-
-    while (a->tab[a->top] != max)
-    {
-        if(b->tab[b->top] < b->tab[b->top - 1])
-            swap_list(b, 'b');
-        push(b, a, 'a');
-        if(a->tab[a->top] > a->tab[a->top - 1])
-            swap_list(a, 'a');
-        i--;
-    }
-
+    max2 = get_max_list(b->tab, b->top + 1);
     while (i >= 0)
     {
-        max2 = get_max_list(b->tab, b->top + 1);
-        
-        if(b->tab[b->top] < b->tab[b->top - 1])
-            swap_list(b, 'b');
-
-        push(b, a, 'a');
-        
-        if(a->tab[a->top] > a->tab[a->top - 1])
-            swap_list(a, 'a');
-            
-        if (a->tab[a->top] > max2)
+        max = get_max_list(b->tab, b->top + 1);
+        if (get_index(b->tab ,  b->top, max) > (b->top / 2))
         {
-            rotate_list(a,'a');
-            continue;
+            while (b->tab[b->top] != max)
+                rotate_list(b, 'b');
         }
-        while (a->tab[0] != max)
-            rotate_reverce_list(a, 'a');
+        else
+        {
+            while (b->tab[b->top] != max)
+                rotate_reverce_list(b, 'b');
+        }
+        push(b, a, 'a');
         i--;
     }
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    // max = get_max_list(b->tab, b->top + 1);
+
+    // while (a->tab[a->top] != max)
+    // {
+    //     if(b->tab[b->top] < b->tab[b->top - 1])
+    //         swap_list(b, 'b');
+    //     push(b, a, 'a');
+    //     if(a->tab[a->top] > a->tab[a->top - 1])
+    //         swap_list(a, 'a');
+    //     i--;
+    // }
+
+    // while (i >= 0)
+    // {
+    //     max2 = get_max_list(b->tab, b->top + 1);
+        
+    //     if(b->tab[b->top] < b->tab[b->top - 1])
+    //         swap_list(b, 'b');
+
+    //     push(b, a, 'a');
+        
+    //     if(a->tab[a->top] > a->tab[a->top - 1])
+    //         swap_list(a, 'a');
+            
+    //     if (a->tab[a->top] > max2)
+    //     {
+    //         rotate_list(a,'a');
+    //         continue;
+    //     }
+    //     while (a->tab[0] != max)
+    //         rotate_reverce_list(a, 'a');
+    //     i--;
+    // }
+
+
+
+
+
+
+
+
+
 
 
 
