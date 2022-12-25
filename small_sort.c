@@ -51,6 +51,27 @@ int get_max_list(int *a, int size)
     }
     return max;
 }
+int get_max_whitout(int *a, int size, int non)
+{
+    int max = a[0], i = 0, j;
+    while(i < size)
+    {
+        j = i + 1;
+        while(j < size)
+        {
+            if (a[j] == non)
+            {
+                j++;
+                continue;
+            }
+            if(max < a[j])
+                max = a[j];
+            j++;
+        }
+        i++;
+    }
+    return max;
+}
 
 // int if_exist(int *a, int size_a,int *array, int start , int end, int old_start , int old_end)
 // {
@@ -71,11 +92,13 @@ int get_max_list(int *a, int size)
 //   return 0;
 // }
 
-int if_exist(int *a, int size_a , int * arr ,int start, int end)
+int if_exist(int *a, int size_a , int * arr ,int start, int end, int t1, int t2)
 {
-    int i = 0;
-    while(i < size_a)
+    int i = start;
+    while(i <= end)
     {
+        if (i == t1)
+            i += (t2 - t1) - 1;
         if (a[i] >= arr[start] && a[i] <= arr[end])
             return 1;
         i++;
@@ -86,11 +109,11 @@ void small_sort(t_list *a, t_list *b)
 {
     int *array_sorted = get_table(a);
     int median = get_median(a), mid = ((a->top + 1) / 2) - 1;
-    int offset =  (a->top + 1) / 8 ,start = mid - offset, end= mid + offset, i = 0, j = 0, max, max2, t1 = 1;
+    int offset =  (a->top + 1) / 8 ,start = mid - offset, end= mid + offset, i = 0, j = 0, max, max2, t1 = 1, max_temp;
 
     while (a->top != -1)
     {
-        while (if_exist(a->tab, a->top + 1,array_sorted, start, end))
+        while (if_exist(a->tab,array_sorted, start, end, i, j))
         {
             if (a->tab[a->top] >= array_sorted[start] && a->tab[a->top] <= array_sorted[end])    
             {
@@ -123,15 +146,11 @@ void small_sort(t_list *a, t_list *b)
             }
             i++;
         }
-        if (is_sorted(a))
-            break;
         i = start;
         j = end;
         start -= offset;
         end += offset;
     }
-    while (a->top != -1)
-        push(a, b, 'b');
     i = b->top;
     max2 = get_max_list(b->tab, b->top + 1);
     while (i >= 0)
@@ -139,6 +158,7 @@ void small_sort(t_list *a, t_list *b)
         max = get_max_list(b->tab, b->top + 1);
         if (get_index(b->tab ,  b->top, max) > (b->top / 2))
         {
+            max_temp = get_max_whitout(b->tab ,b->top + 1, max);
             while (b->tab[b->top] != max)
                 rotate_list(b, 'b');
         }
