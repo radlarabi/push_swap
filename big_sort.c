@@ -6,72 +6,109 @@
 /*   By: rlarabi <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/12/16 19:12:26 by rlarabi           #+#    #+#             */
-/*   Updated: 2023/01/02 16:35:56 by rlarabi          ###   ########.fr       */
+/*   Updated: 2023/01/08 15:56:46 by rlarabi          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "push_swap.h"
 
-void big_sort(t_list *a, t_list *b)
+void	push_a_b(t_list *a, t_list *b, int start, int end)
 {
-    int *array_sorted = get_table(a);
-    int mid = ((a->top + 1) / 2) - 1;
-    int offset =  (a->top + 1) / 20 ,start = mid - offset, end= mid + offset, i = 0, j = 0, max, max2;
+	int	mid;
+	int	*array_sorted;
+	int	offset;
 
-    while (a->top != -1)
-    {
-        while (if_exist(a->tab, a->top + 1,array_sorted, start, end))
-        {
-            if (a->tab[a->top] >= array_sorted[start] && a->tab[a->top] <= array_sorted[end])    
-            {
-                push(a, b, 'b');
-                if(b->tab[b->top] <= array_sorted[mid] && b->top != 0 && b->top != -1)
-                    rotate_list(b , 'b');
-            }
-            else
-            {
-                i = 0;
-                while(i <= a->top / 2)
-                {
-                   if (a->tab[i] >= array_sorted[start] && a->tab[i] <= array_sorted[end])
-                        break;
-                    i++;
-                }
-                j = a->top;
-                while(j / 2 >= 0)
-                {
-                   if (a->tab[j] >= array_sorted[start] && a->tab[j] <= array_sorted[end])
-                        break;
-                    j--;
-                }
-                if (i >= a->top - j)
-                    rotate_list(a, 'a');
-                else
-                    rotate_reverce_list(a, 'a');
-            }
-        }
-        start -= offset;
-        end += offset;
-    }
-    i = b->top;
-    j = 0;
-    max2 = get_max_list(b->tab, b->top + 1);
-    while (i >= 0)
-    {
-        max = get_max_list(b->tab, b->top + 1);
-        if (get_index(b->tab ,  b->top, max) > (b->top / 2))
-        {
-            while (b->tab[b->top] != max)
-                rotate_list(b, 'b');
-        }
-        else
-        {
-            while (b->tab[b->top] != max)
-                rotate_reverce_list(b, 'b');
-        }
-        push(b, a, 'a');
-        i--;
-    }
+	offset = (a->top + 1) / 20;
+	array_sorted = get_table(a);
+	mid = ((a->top + 1) / 2) - 1;
+	while (a->top != -1)
+	{
+		while (if_exist(a, array_sorted, start, end))
+		{
+			if (a->tab[a->top] >= array_sorted[start]
+				&& a->tab[a->top] <= array_sorted[end])
+			{
+				push(a, b, 'b');
+				if (b->tab[b->top] <= array_sorted[mid] && b->top != 0
+					&& b->top != -1)
+					rotate_list(b, 'b');
+			}
+			else
+				sub_push_a_b(a, array_sorted, start, end);
+		}
+		start -= offset;
+		end += offset;
+	}
 }
 
+int	rotate(t_list *a, t_list *b, int max, int down)
+{
+	while (b->tab[b->top] != max && b->top != -1)
+	{
+		if (a->tab[0] < b->tab[b->top] || down == 0)
+		{
+			push(b, a, 'a');
+			rotate_list(a, 'a');
+			down++;
+		}
+		else
+			rotate_list(b, 'b');
+	}
+	return (down);
+}
 
+int	rotate_reverce(t_list *a, t_list *b, int max, int down)
+{
+	while (b->tab[b->top] != max && b->top != -1)
+	{
+		if (a->tab[0] < b->tab[b->top] || down == 0)
+		{
+			push(b, a, 'a');
+			rotate_list(a, 'a');
+			down++;
+		}
+		else
+			rotate_reverce_list(b, 'b');
+	}
+	return (down);
+}
+
+void	push_b_a(t_list *a, t_list *b)
+{
+	int	max;
+	int	down;
+
+	down = 0;
+	while (b->top != -1)
+	{
+		max = get_max_list(b->tab, b->top + 1);
+		if (get_index(b->tab, b->top, max) > (b->top / 2))
+			down = rotate(a, b, max, down);
+		else
+			down = rotate_reverce(a, b, max, down);
+		while (a->tab[0] > b->tab[b->top] && down != 0)
+		{
+			down--;
+			rotate_reverce_list(a, 'a');
+		}
+		push(b, a, 'a');
+	}
+	while (down != 0)
+	{
+		down--;
+		rotate_reverce_list(a, 'a');
+	}
+}
+
+void	big_sort(t_list *a, t_list *b)
+{
+	int	*array_sorted;
+	int	mid;
+	int	offset;
+
+	array_sorted = get_table(a);
+	mid = ((a->top + 1) / 2) - 1;
+	offset = (a->top + 1) / 20;
+	push_a_b(a, b, mid - offset, mid + offset);
+	push_b_a(a, b);
+}

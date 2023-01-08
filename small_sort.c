@@ -6,83 +6,97 @@
 /*   By: rlarabi <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/12/16 19:11:56 by rlarabi           #+#    #+#             */
-/*   Updated: 2023/01/02 15:20:12 by rlarabi          ###   ########.fr       */
+/*   Updated: 2023/01/08 15:59:10 by rlarabi          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "push_swap.h"
 
-int	calcule_steps(t_list *a, t_list *b, int *array_sorted, int start, int end)
+void	push_a_to_b(t_list *a, t_list *b, int start, int end)
 {
-	int	i;
-	int	j;
+	int	mid;
+	int	*array_sorted;
+	int	offset;
 
-	i = 0;
-	while (i <= a->top)
+	offset = (a->top + 1) / 8;
+	array_sorted = get_table(a);
+	mid = ((a->top + 1) / 2) - 1;
+	while (a->top != -1)
 	{
-		if (a->tab[i] >= array_sorted[start] && a->tab[i] <= array_sorted[end])
-			break ;
-		i++;
+		while (if_exist(a, array_sorted, start, end))
+		{
+			if (a->tab[a->top] >= array_sorted[start]
+				&& a->tab[a->top] <= array_sorted[end])
+			{
+				push(a, b, 'b');
+				if (b->tab[b->top] <= array_sorted[mid] && b->top != 0
+					&& b->top != -1)
+					rotate_list(b, 'b');
+			}
+			else
+				sub_push_a_b(a, array_sorted, start, end);
+		}
+		start -= offset;
+		end += offset;
 	}
-	j = a->top;
-	while (j >= 0)
-	{
-		if (a->tab[j] >= array_sorted[start] && a->tab[j] <= array_sorted[end])
-			break ;
-		j--;
-	}
-	if (i >= a->top - j)
-		return (1);
-	else
-		return (0);
 }
 
-void	push_a_b(t_list *a, t_list *b, int start, int end, int *array_sorted)
+int	rotate1(t_list *a, t_list *b, int max, int down)
 {
-    int mid;
-
-    mid = ((a->top + 1) / 2) - 1;
-	while (if_exist(a->tab, a->top + 1, array_sorted, start, end))
+	while (b->tab[b->top] != max && b->top != -1)
 	{
-		if (a->tab[a->top] >= array_sorted[start]
-			&& a->tab[a->top] <= array_sorted[end])
+		if (a->tab[0] < b->tab[b->top] || down == 0)
 		{
-			push(a, b, 'b');
-			if (b->tab[b->top] <= array_sorted[mid]
-            && b->top != 0 && b->top != -1)
-				rotate_list(b, 'b');
+			push(b, a, 'a');
+			rotate_list(a, 'a');
+			down++;
 		}
 		else
-		{
-			if (calcule_steps(a, b, array_sorted, start, end))
-				rotate_list(a, 'a');
-			else
-				rotate_reverce_list(a, 'a');
-		}
+			rotate_list(b, 'b');
 	}
+	return (down);
 }
 
-void	push_b_a(t_list *a, t_list *b)
+int	rotate_reverce1(t_list *a, t_list *b, int max, int down)
 {
-	int	i;
-	int	max;
+	while (b->tab[b->top] != max && b->top != -1)
+	{
+		if (a->tab[0] < b->tab[b->top] || down == 0)
+		{
+			push(b, a, 'a');
+			rotate_list(a, 'a');
+			down++;
+		}
+		else
+			rotate_reverce_list(b, 'b');
+	}
+	return (down);
+}
 
-	i = b->top;
-	while (i >= 0)
+void	push_b_to_a(t_list *a, t_list *b)
+{
+	int	max;
+	int	down;
+
+	down = 0;
+	while (b->top != -1)
 	{
 		max = get_max_list(b->tab, b->top + 1);
 		if (get_index(b->tab, b->top, max) > (b->top / 2))
-		{
-			while (b->tab[b->top] != max)
-				rotate_list(b, 'b');
-		}
+			down = rotate1(a, b, max, down);
 		else
+			down = rotate_reverce1(a, b, max, down);
+		while (a->tab[0] > b->tab[b->top] && down != 0)
 		{
-			while (b->tab[b->top] != max)
-				rotate_reverce_list(b, 'b');
+			down--;
+			rotate_reverce_list(a, 'a');
 		}
 		push(b, a, 'a');
-		i--;
+	}
+	while (down != 0)
+	{
+		down--;
+		rotate_reverce_list(a, 'a');
 	}
 }
 
@@ -91,19 +105,10 @@ void	small_sort(t_list *a, t_list *b)
 	int	*array_sorted;
 	int	mid;
 	int	offset;
-	int	start;
-	int	end;
 
 	array_sorted = get_table(a);
 	mid = ((a->top + 1) / 2) - 1;
 	offset = (a->top + 1) / 8;
-	start = mid - offset;
-	end = mid + offset;
-	while (a->top != -1)
-	{
-		push_a_b(a, b, start, end, array_sorted);
-		start -= offset;
-		end += offset;
-	}
-	push_b_a(a, b);
+	push_a_to_b(a, b, mid - offset, mid + offset);
+	push_b_to_a(a, b);
 }
