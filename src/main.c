@@ -6,13 +6,13 @@
 /*   By: rlarabi <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/12/09 19:41:17 by rlarabi           #+#    #+#             */
-/*   Updated: 2023/01/08 20:39:10 by rlarabi          ###   ########.fr       */
+/*   Updated: 2023/01/10 17:01:44 by rlarabi          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "push_swap.h"
 
-void	init_stacks(t_list *a, t_list *b, int ac, char **av)
+void	init_stacks(t_list *a, int ac, char **av)
 {
 	int		i;
 	int		j;
@@ -31,8 +31,8 @@ void	init_stacks(t_list *a, t_list *b, int ac, char **av)
 		while (k >= 0)
 			a->tab[++a->top] = ft_atoi(temp[k--]);
 		i++;
+		free_2d_table(temp);
 	}
-	free(temp);
 }
 
 int	count_args(int ac, char **av, int count)
@@ -55,8 +55,10 @@ int	count_args(int ac, char **av, int count)
 			while (temp[k++])
 				count++;
 			j++;
+			free_2d_table(temp);
 		}
 		i++;
+		free_2d_table(ret);
 	}
 	return (count);
 }
@@ -79,7 +81,7 @@ void	sort_cases(t_list *a, t_list *b)
 		big_sort(a, b);
 }
 
-void	remplire_stacks(t_list *a, t_list *b, int ac, char **av)
+void	remplire_stacks(t_list *a, int ac, char **av)
 {
 	int		i;
 	char	**ret;
@@ -90,17 +92,16 @@ void	remplire_stacks(t_list *a, t_list *b, int ac, char **av)
 		ret = ft_split(av[1], ' ');
 		while (i > 0)
 			a->tab[++a->top] = ft_atoi(ret[--i]);
-		free(ret);
+		free_2d_table(ret);
 	}
 	else if (ac > 2)
-		init_stacks(a, b, ac, av);
+		init_stacks(a, ac, av);
 }
 
 int	main(int ac, char **av)
 {
 	t_list	*a;
 	t_list	*b;
-	char	**ret;
 
 	if (ac == 1)
 		return (0);
@@ -111,7 +112,7 @@ int	main(int ac, char **av)
 	}
 	a = create_list(count_args(ac, av, 0));
 	b = create_list(count_args(ac, av, 0));
-	remplire_stacks(a, b, ac, av);
+	remplire_stacks(a, ac, av);
 	if (is_duplicate(a))
 	{
 		write(2, "Error\n", 6);

@@ -6,7 +6,7 @@
 /*   By: rlarabi <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/01/06 20:22:23 by rlarabi           #+#    #+#             */
-/*   Updated: 2023/01/08 15:56:54 by rlarabi          ###   ########.fr       */
+/*   Updated: 2023/01/10 16:42:09 by rlarabi          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,6 +18,19 @@ void	free_stacks(t_list *a, t_list *b)
 	free(a);
 	free(b->tab);
 	free(b);
+}
+
+void	free_2d_table(char **t)
+{
+	int	i;
+
+	i = 0;
+	while (t[i])
+	{
+		free(t[i]);
+		i++;
+	}
+	free(t);
 }
 
 int	check_args(int ac, char **av)
@@ -39,12 +52,10 @@ int	check_args(int ac, char **av)
 					&& !ft_isdigit(temp[j][i + 1]) && temp[j][i + 1] != ' ')
 					return (0);
 			}
-			if ((ft_atoi(temp[j]) == -1 && ft_strncmp(temp[j], "-1", 2) != 0)
-				|| (ft_atoi(temp[j]) == 0 && ft_strncmp(temp[j], "0", 1) != 0
-					&& ft_strncmp(temp[j], "+0", 2) != 0 && ft_strncmp(temp[j],
-						"-0", 2) != 0))
+			if (!sub_check_args(temp[j]))
 				return (0);
 		}
+		free_2d_table(temp);
 	}
 	return (1);
 }
@@ -80,12 +91,4 @@ int	get_index(int *a, int size, int i)
 	while (j <= size && i != a[j])
 		j++;
 	return (j);
-}
-
-void	sub_push_a_b(t_list *a, int *array_sorted, int start, int end)
-{
-	if (calcule_steps(a, array_sorted, start, end))
-		rotate_list(a, 'a');
-	else
-		rotate_reverce_list(a, 'a');
 }

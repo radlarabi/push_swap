@@ -1,13 +1,14 @@
 SRCS = 	main.c \
 		operations.c \
-		utiles1.c \
-		utiles2.c \
-		utiles3.c \
 		utiles_sort.c \
 		small_sort.c \
 		big_sort.c \
+		utiles1.c \
+		utiles2.c \
+		utiles3.c \
+		utiles4.c \
 
-# CFLAGS = -Wall -Wextra -Werror
+CFLAGS = -Wall -Wextra -Werror
 NAME = push_swap
 RM = rm -f
 

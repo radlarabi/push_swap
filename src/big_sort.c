@@ -6,7 +6,7 @@
 /*   By: rlarabi <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/12/16 19:12:26 by rlarabi           #+#    #+#             */
-/*   Updated: 2023/01/08 15:56:46 by rlarabi          ###   ########.fr       */
+/*   Updated: 2023/01/10 16:56:58 by rlarabi          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,9 +16,9 @@ void	push_a_b(t_list *a, t_list *b, int start, int end)
 {
 	int	mid;
 	int	*array_sorted;
-	int	offset;
+	int	size;
 
-	offset = (a->top + 1) / 20;
+	size = a->top;
 	array_sorted = get_table(a);
 	mid = ((a->top + 1) / 2) - 1;
 	while (a->top != -1)
@@ -29,16 +29,16 @@ void	push_a_b(t_list *a, t_list *b, int start, int end)
 				&& a->tab[a->top] <= array_sorted[end])
 			{
 				push(a, b, 'b');
-				if (b->tab[b->top] <= array_sorted[mid] && b->top != 0
-					&& b->top != -1)
+				if (b->tab[b->top] <= array_sorted[mid] && b->top > 0)
 					rotate_list(b, 'b');
 			}
 			else
 				sub_push_a_b(a, array_sorted, start, end);
 		}
-		start -= offset;
-		end += offset;
+		start = change_chunk_big(start, end, size, 's');
+		end = change_chunk_big(start, end, size, 'e');
 	}
+	free(array_sorted);
 }
 
 int	rotate(t_list *a, t_list *b, int max, int down)
@@ -102,13 +102,11 @@ void	push_b_a(t_list *a, t_list *b)
 
 void	big_sort(t_list *a, t_list *b)
 {
-	int	*array_sorted;
 	int	mid;
 	int	offset;
 
-	array_sorted = get_table(a);
 	mid = ((a->top + 1) / 2) - 1;
-	offset = (a->top + 1) / 20;
+	offset = (a->top + 1) / 12;
 	push_a_b(a, b, mid - offset, mid + offset);
 	push_b_a(a, b);
 }

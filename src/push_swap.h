@@ -6,7 +6,7 @@
 /*   By: rlarabi <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/12/09 17:38:23 by rlarabi           #+#    #+#             */
-/*   Updated: 2023/01/08 18:50:54 by rlarabi          ###   ########.fr       */
+/*   Updated: 2023/01/10 16:55:58 by rlarabi          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -54,6 +54,10 @@ int		calcule_steps(t_list *a, int *array_sorted, int start, int end);
 void	free_stacks(t_list *a, t_list *b);
 int		check_args(int ac, char **av);
 void	sub_push_a_b(t_list *a, int *array_sorted, int start, int end);
+void	free_2d_table(char **t);
+int		change_chunk_big(int start, int end, int size, char a);
+int		sub_check_args(char *temp);
+int		change_chunk_small(int start, int end, int size, char a);
 /* sort utiles */
 void	sort_2(t_list *a);
 void	sort_3(t_list *a);

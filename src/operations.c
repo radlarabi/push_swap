@@ -6,7 +6,7 @@
 /*   By: rlarabi <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/12/13 18:47:08 by rlarabi           #+#    #+#             */
-/*   Updated: 2023/01/06 15:27:49 by rlarabi          ###   ########.fr       */
+/*   Updated: 2023/01/10 12:16:21 by rlarabi          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -45,24 +45,18 @@ void	push(t_list *a, t_list *b, char m)
 void	rotate_reverce_list(t_list *list, char m)
 {
 	int	i;
-	int	*temp;
+	int	temp;
 
-	i = 0;
 	if (list->top != -1)
 	{
-		temp = malloc(sizeof(int) * list->top);
-		temp[list->top] = list->tab[0];
+		i = 0;
+		temp = list->tab[0];
 		while (i < list->top)
 		{
-			temp[i] = list->tab[i + 1];
+			list->tab[i] = list->tab[i + 1];
 			i++;
 		}
-		i = 0;
-		while (i <= list->top)
-		{
-			list->tab[i] = temp[i];
-			i++;
-		}
+		list->tab[list->top] = temp;
 		if (m == 'a')
 			write(1, "rra\n", 4);
 		else if (m == 'b')
@@ -73,24 +67,18 @@ void	rotate_reverce_list(t_list *list, char m)
 void	rotate_list(t_list *list, char m)
 {
 	int	i;
-	int	*temp;
+	int	temp;
 
-	i = 1;
 	if (list->top != -1)
 	{
-		temp = malloc(sizeof(int) * list->top);
-		temp[0] = list->tab[list->top];
-		while (i <= list->top)
+		i = list->top;
+		temp = list->tab[list->top];
+		while (i > 0)
 		{
-			temp[i] = list->tab[i - 1];
-			i++;
+			list->tab[i] = list->tab[i - 1];
+			i--;
 		}
-		i = 0;
-		while (i <= list->top)
-		{
-			list->tab[i] = temp[i];
-			i++;
-		}
+		list->tab[0] = temp;
 		if (m == 'a')
 			write(1, "ra\n", 3);
 		else if (m == 'b')
