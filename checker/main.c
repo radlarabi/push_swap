@@ -6,7 +6,7 @@
 /*   By: rlarabi <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/12/20 17:40:55 by rlarabi           #+#    #+#             */
-/*   Updated: 2023/01/08 21:34:02 by rlarabi          ###   ########.fr       */
+/*   Updated: 2023/01/10 17:16:50 by rlarabi          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,8 +32,10 @@ int	count_args(int ac, char **av, int count)
 			while (temp[k++])
 				count++;
 			j++;
+			free_2d_table(temp);
 		}
 		i++;
+		free_2d_table(ret);
 	}
 	return (count);
 }
@@ -49,7 +51,7 @@ void	remplire_stacks(t_list *a, t_list *b, int ac, char **av)
 		ret = ft_split(av[1], ' ');
 		while (i > 0)
 			a->tab[++a->top] = ft_atoi(ret[--i]);
-		free(ret);
+		free_2d_table(ret);
 	}
 	else if (ac > 2)
 		init_stacks(a, b, ac, av);
@@ -58,7 +60,9 @@ void	remplire_stacks(t_list *a, t_list *b, int ac, char **av)
 int	read_result(t_list *a, t_list *b)
 {
 	char	*temp;
+	int		i;
 
+	i = 0;
 	while (1)
 	{
 		temp = get_next_line(0);
@@ -66,7 +70,10 @@ int	read_result(t_list *a, t_list *b)
 			break ;
 		read_op1(a, b, temp);
 		if (!read_op2(a, b, temp))
+		{
 			return (0);
+		}
+		free(temp);
 	}
 	return (1);
 }

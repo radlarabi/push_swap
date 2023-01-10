@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   utiles.c                                           :+:      :+:    :+:   */
+/*   utiles1.c                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: rlarabi <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/01/08 18:46:17 by rlarabi           #+#    #+#             */
-/*   Updated: 2023/01/08 20:57:06 by rlarabi          ###   ########.fr       */
+/*   Updated: 2023/01/10 12:38:23 by rlarabi          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -86,12 +86,10 @@ int	check_args(int ac, char **av)
 					&& !ft_isdigit(temp[j][i + 1]) && temp[j][i + 1] != ' ')
 					return (0);
 			}
-			if ((ft_atoi(temp[j]) == -1 && ft_strncmp(temp[j], "-1", 2) != 0)
-				|| (ft_atoi(temp[j]) == 0 && ft_strncmp(temp[j], "0", 1) != 0
-					&& ft_strncmp(temp[j], "+0", 2) != 0 && ft_strncmp(temp[j],
-						"-0", 2) != 0))
+			if (!sub_check_args(temp[j]))
 				return (0);
 		}
+		free_2d_table(temp);
 	}
 	return (1);
 }

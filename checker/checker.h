@@ -6,7 +6,7 @@
 /*   By: rlarabi <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/07 14:52:02 by rlarabi           #+#    #+#             */
-/*   Updated: 2023/01/08 21:19:56 by rlarabi          ###   ########.fr       */
+/*   Updated: 2023/01/10 12:39:02 by rlarabi          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -48,4 +48,6 @@ void	read_op1(t_list *a, t_list *b, char *temp);
 int		read_op2(t_list *a, t_list *b, char *temp);
 void	free_stacks(t_list *a, t_list *b);
 void	init_stacks(t_list *a, t_list *b, int ac, char **av);
+void	free_2d_table(char **t);
+int		sub_check_args(char *temp);
 #endif

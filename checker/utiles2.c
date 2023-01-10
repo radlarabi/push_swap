@@ -6,7 +6,7 @@
 /*   By: rlarabi <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/01/08 20:58:45 by rlarabi           #+#    #+#             */
-/*   Updated: 2023/01/08 21:32:33 by rlarabi          ###   ########.fr       */
+/*   Updated: 2023/01/10 12:39:35 by rlarabi          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -35,6 +35,11 @@ void	read_op1(t_list *a, t_list *b, char *temp)
 
 int	read_op2(t_list *a, t_list *b, char *temp)
 {
+	if (!ft_strncmp(temp, "ra", 2) || !ft_strncmp(temp, "rra", 3)
+		|| !ft_strncmp(temp, "rb", 2) || !ft_strncmp(temp, "rrb", 3)
+		|| !ft_strncmp(temp, "sa", 2) || !ft_strncmp(temp, "sb", 2)
+		|| !ft_strncmp(temp, "ss", 2))
+		return (1);
 	if (!ft_strncmp(temp, "pa", 2))
 		push(b, a);
 	else if (!ft_strncmp(temp, "pb", 2))
@@ -76,6 +81,30 @@ void	init_stacks(t_list *a, t_list *b, int ac, char **av)
 		while (k >= 0)
 			a->tab[++a->top] = ft_atoi(temp[k--]);
 		i++;
+		free_2d_table(temp);
 	}
-	free(temp);
+}
+
+void	free_2d_table(char **t)
+{
+	int	i;
+
+	i = 0;
+	while (t[i])
+	{
+		free(t[i]);
+		i++;
+	}
+	free(t);
+}
+
+int	sub_check_args(char *temp)
+{
+	if ((ft_atoi(temp) == -1 && ft_strncmp(temp, "-1", 2) != 0)
+		|| (ft_atoi(temp) == 0 && ft_strncmp(temp, "0", 1) != 0
+			&& ft_strncmp(temp, "+0", 2) != 0 && ft_strncmp(temp, "-0",
+				2) != 0))
+		return (0);
+	else
+		return (1);
 }
